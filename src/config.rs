@@ -2,6 +2,7 @@ use dirs::config_dir;
 use serde::{Deserialize, Serialize};
 use std::fs::DirBuilder;
 use std::fs::OpenOptions;
+use std::io::prelude::*;
 #[allow(dead_code)]
 #[derive(Serialize, Deserialize)]
 pub struct ConfigData {
@@ -29,8 +30,8 @@ impl ConfigData {
         }
     }
     // write new json config file to .config/rss_gen/config.json an error will be thrown if the
-    // file exists should only be run on first startup. 
-    pub fn write_new_config(self) {         
+    // file exists should only be run on first startup.
+    pub fn write_new_config(self) {
         let mut config_path = match config_dir() {
             Some(x) => x,
             None => panic!(
@@ -58,6 +59,37 @@ impl ConfigData {
         };
     }
 }
+#[allow(dead_code)]
+pub fn read_config() -> ConfigData {
+    let mut config = match config_dir() {
+        Some(x) => x,
+        None => panic!(
+            "coudn't access your configuration directory on linux this is home/user/.config\n"
+        ),
+    };
+    config.push("rss_gen");
+    let config_file_op = OpenOptions::new().read(true).open(config);
+    let mut config_file = match config_file_op {
+        Ok(i) => i,
+        Err(e) => panic!(
+            "couln't open your config file. on linux this is located at home/user/.config\n{:?}",
+            e
+        ),
+    };
+    let mut config_string = String::new();
+    match config_file.read_to_string(&mut config_string) {
+        Ok(x) => x,
+        Err(e) => panic!("couldn't parse config file, check to make sure the syntax is correct and run again.\n{:?}", e)
+    };
+
+    let cd:ConfigData = match serde_json::from_str(config_string.as_mut_str()) {
+        Ok(i) => i,
+        Err(e) => panic!("couldn't parse config file, check to make sure the syntax is correct and run again.\n{:?}", e)
+    };
+
+    cd
+}
+
 #[allow(dead_code)]
 pub struct Post {
     pub title: String,
