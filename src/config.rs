@@ -67,7 +67,7 @@ pub fn read_config() -> ConfigData {
             "coudn't access your configuration directory on linux this is home/user/.config\n"
         ),
     };
-    config.push("rss_gen");
+    config.push("rss_gen/config.json");
     let config_file_op = OpenOptions::new().read(true).open(config);
     let mut config_file = match config_file_op {
         Ok(i) => i,
