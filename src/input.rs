@@ -16,12 +16,14 @@ pub fn parse_title(input: &str) -> IResult<&str, &str> {
 pub fn strip_till_title(input: &str) -> IResult<&str, &str> {
     take_until("<h2>")(input)
 }
+#[allow(dead_code)]
 pub fn strip_prefix(input: &str) -> IResult<&str, &str> {
     take_until("<p>")(input)
 }
 pub fn strip_suffix(input: &str) -> IResult<&str, &str> {
     take_until("HTML;")(input)
 }
+#[allow(dead_code)]
 pub fn parse_body(input: &str) -> IResult<&str, &str> {
     delimited(tag("<<<HTML"), is_not("1>"), tag("</h"))(input)
 }
@@ -30,6 +32,20 @@ pub fn enclose(content: &str, tag_type: &str) -> String {
     let mut tag = String::from("<");
     let end_tag_start = "</";
     let tag_end = ">";
+    tag.push_str(tag_type);
+    tag.push_str(tag_end);
+    tag.push_str(content);
+    tag.push_str(end_tag_start);
+    tag.push_str(tag_type);
+    tag.push_str(tag_end);
+
+    tag
+}
+//for description being on their own lines as well as comments etc.
+pub fn enclose_nl(content: &str, tag_type: &str) -> String {
+    let mut tag = String::from("<");
+    let end_tag_start = "\n</";
+    let tag_end = ">\n";
     tag.push_str(tag_type);
     tag.push_str(tag_end);
     tag.push_str(content);

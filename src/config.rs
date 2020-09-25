@@ -96,15 +96,17 @@ pub struct Post {
     pub language: String,
     pub description: String, //<-- body of the rss post.
     pub category: String,    //what kind of post is it about eg coding art etc.
+    pub link: String,    //file name of the post
 }
 #[allow(dead_code)]
 impl Post {
-    pub fn new(title: &str, language: &str, description: &str, category: &str) -> Post {
+    pub fn new(title: &str, language: &str, description: &str, category: &str, file_name: &str) -> Post {
         Post {
             title: title.to_string(),
             language: language.to_string(),
             description: description.to_string(),
             category: category.to_string(),
+            link: file_name.to_string(),
         }
     }
     pub fn default() -> Post {
