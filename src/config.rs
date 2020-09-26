@@ -115,6 +115,7 @@ impl Post {
             language: String::new(),
             description: String::new(),
             category: String::new(),
+            link: String::new()
         }
     }
 }
