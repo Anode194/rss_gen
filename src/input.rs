@@ -45,9 +45,10 @@ pub fn enclose(content: &str, tag_type: &str) -> String {
 pub fn enclose_nl(content: &str, tag_type: &str) -> String {
     let mut tag = String::from("<");
     let end_tag_start = "\n</";
-    let tag_end = ">\n";
+    let tag_end = ">";
+    let tag_end_nl = ">\n";
     tag.push_str(tag_type);
-    tag.push_str(tag_end);
+    tag.push_str(tag_end_nl);
     tag.push_str(content);
     tag.push_str(end_tag_start);
     tag.push_str(tag_type);
