@@ -1,13 +1,18 @@
 use crate::config::ConfigData;
 use crate::input::enclose;
+use crate::input::enclose_nl;
 use std::io::BufReader;
 use crate::config::Post;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::Write;
 
+    //cd.link == link to blog 
+    //cd.blog_dir == blogposts are found 
+    //post.link == name of blogpost file
+    
 pub fn write_to_out_file(post: Post, output_file: &str, cd: ConfigData) {
-        let post_link = format!("{}/{}",cd.link,cd.blog_dir);
+        let post_link = format!("{}/{}/{}",cd.link, cd.blog_dir, post.link); 
         let mut out_str = format!(
        "<?xml version='1.0' encoding='UTF-8' ?>\n<rss version='2.0'>\n\t<channel>
        \t\t{}    
@@ -28,7 +33,7 @@ pub fn write_to_out_file(post: Post, output_file: &str, cd: ConfigData) {
        enclose(&post_link,"link"),
        enclose(&post.title,"title"),
        enclose(&cd.language,"language"),
-       enclose(&post.description,"description"),
+       enclose_nl(&post.description,"description"),
        enclose(&post.category,"category"),
         );
     if output_file == "default" {
