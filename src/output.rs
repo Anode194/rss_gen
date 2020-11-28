@@ -13,7 +13,7 @@ use std::io::Write;
     
 pub fn write_to_out_file(post: Post, output_file: &str, cd: ConfigData) {
         let post_link = format!("{}/{}/{}",cd.link, cd.blog_dir, post.link); 
-        let mut out_str = format!(
+        let out_str = format!(
        "<?xml version='1.0' encoding='UTF-8' ?>\n<rss version='2.0'>\n\t<channel>
        \t\t{}    
        \t\t{}    
@@ -58,4 +58,26 @@ fn open_output_file(output: &str) -> File {
         Err(e) => panic!("couldn't open output file was it misspelled? {:?}",e),
     };
     config_file
+}
+fn format_posts(posts: Vec<Post>) -> String {
+    let mut out_str = String::new();
+    for post in posts {
+        let item = format! ("
+       \t\t<item>
+       \t\t\t{}
+       \t\t\t{}
+       \t\t\t{}
+       \t\t\t{}
+       \t\t\t{}
+       \t\t</item>\n
+        ",enclose(&post.title,"title"),
+        enclose(&post.link,"link"),
+        enclose(&post.language,"language"),
+        enclose(&post.description,"description"),
+        enclose(&post.category,"category")
+        );
+        out_str.push_str(&item);
+    }
+
+    out_str
 }
