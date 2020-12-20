@@ -37,7 +37,10 @@ fn main() {
     }
     let path = Path::new(&input_file);
     if path.is_dir() {
+        let mut conf = config::read_config();
         let posts = post_dir(&path);
+        output::write_to_out_file(posts, output_file.as_mut_str(), conf);
+
     } else {
         let mut contents =
         fs::read_to_string(&input_file).expect("Something went wrong opening the file.");
@@ -63,8 +66,9 @@ fn main() {
 
         //println!("\n\n\n");
         //println!("{:?}", body);
-
+        
         let post = config::Post::new(title, conf.language.as_mut_str(), body, "", &input_file);
-        output::write_to_out_file(post, output_file.as_mut_str(), conf);
+        let posts = vec!(post);
+        output::write_to_out_file(posts, output_file.as_mut_str(), conf);
     }
 }
