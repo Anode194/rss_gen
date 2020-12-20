@@ -70,7 +70,7 @@ pub fn post_dir(dir: &Path) -> Vec<Post> { //TODO: create  test
             for files in entry {
                 let file = files.unwrap();
                 let path = file.path();
-                if path.is_dir() {
+                if !path.is_dir() {
                 let mut contents =
                     fs::read_to_string(&path).expect("Something went wrong opening the file.");
                 let header_garbage = match strip_till_title(contents.as_mut_str()) {
