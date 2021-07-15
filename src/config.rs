@@ -35,7 +35,7 @@ impl ConfigData {
         let mut config_path = match config_dir() {
             Some(x) => x,
             None => panic!(
-                "coudn't access your configuration directory on linux this is home/user/.config\n"
+                "couldn't access your configuration directory on linux this is home/user/.config\n"
             ),
         };
         config_path.push("rss_gen");
@@ -44,7 +44,6 @@ impl ConfigData {
                 .recursive(true)
                 .create(&config_path)
                 .unwrap();
-            println!("{:?}\n", config_path.to_str());
             config_path.push("config.json");
             let config_file = OpenOptions::new()
                 .write(true)
