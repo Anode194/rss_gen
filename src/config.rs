@@ -10,7 +10,7 @@ pub struct ConfigData {
     pub link: String,        // <-- link to your blog
     pub description: String, // <-- description of your blog
     pub blog_dir: String,    // <-- place where blog posts are kepts
-    pub language: String,    // <-- place where blog posts are kepts
+    pub language: String,    // <-- language of the website
 }
 #[allow(dead_code)]
 impl ConfigData {
