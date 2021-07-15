@@ -11,30 +11,19 @@ use std::io::Write;
     //cd.blog_dir == blogposts are found 
     //post.link == name of blogpost file
     
-pub fn write_to_out_file(post: Post, output_file: &str, cd: ConfigData) {
-        let post_link = format!("{}/{}/{}",cd.link, cd.blog_dir, post.link); 
-        let mut out_str = format!(
+pub fn write_to_out_file(posts: Vec<Post>, output_file: &str, cd: ConfigData) {
+        let out_str = format!(
        "<?xml version='1.0' encoding='UTF-8' ?>\n<rss version='2.0'>\n\t<channel>
        \t\t{}    
        \t\t{}    
        \t\t{}    
-       \t\t<item>
-       \t\t\t{}
-       \t\t\t{}
-       \t\t\t{}
-       \t\t\t{}
-       \t\t\t{}
-       \t\t</item>
+       {}
        \t</channel>
        </rss>",
        enclose(&cd.title,"title"),
        enclose(&cd.link,"link"),
        enclose(&cd.description,"description"),
-       enclose(&post_link,"link"),
-       enclose(&post.title,"title"),
-       enclose(&cd.language,"language"),
-       enclose_nl(&post.description,"description"),
-       enclose(&post.category,"category"),
+       format_posts(posts, &cd.link),
         );
     if output_file == "default" {
         let mut file = match File::create("blog.xml") {
@@ -58,4 +47,26 @@ fn open_output_file(output: &str) -> File {
         Err(e) => panic!("couldn't open output file was it misspelled? {:?}",e),
     };
     config_file
+}
+fn format_posts(posts: Vec<Post>, link: &str) -> String {
+    let mut out_str = String::new();
+    for post in posts {
+        let item = format! ("
+       \t\t<item>
+       \t\t\t{}
+       \t\t\t{}
+       \t\t\t{}
+       \t\t\t{}
+       \t\t\t{}
+       \t\t</item>\n
+        ",enclose(&post.title,"title"),
+        enclose(&format!("{}/{}",link, &post.link),"link"),
+        enclose(&post.language,"language"),
+        enclose(&post.description,"description"),
+        enclose(&post.category,"category")
+        );
+        out_str.push_str(&item);
+    }
+
+    out_str
 }
