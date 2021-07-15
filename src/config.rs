@@ -44,19 +44,26 @@ impl ConfigData {
                 .recursive(true)
                 .create(&config_path)
                 .unwrap();
-        }
-        println!("{:?}\n", config_path.to_str());
-        config_path.push("config.json");
-        let config_file = OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(config_path)
-            .unwrap();
+            println!("{:?}\n", config_path.to_str());
+            config_path.push("config.json");
+            let config_file = OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(config_path)
+                .unwrap();
 
-        let _j = match serde_json::to_writer_pretty(config_file, &self) {
-            Ok(i) => i,
-            Err(e) => panic!("{:?}", e),
-        };
+            let _j = match serde_json::to_writer_pretty(config_file, &self) {
+                Ok(i) => i,
+                Err(e) => panic!("{:?}", e),
+            };
+        } else {
+            println!(
+                "It appears that the file already exists.\n
+You can find the file on linux in your $HOME/.config \n
+on macos in the $HOME/Library/preferences folder\n
+and on windows in your your user\\name\\AppData\\Roaming folder"
+            );
+        }
     }
 }
 #[allow(dead_code)]
@@ -96,11 +103,17 @@ pub struct Post {
     pub language: String,
     pub description: String, //<-- body of the rss post.
     pub category: String,    //what kind of post is it about eg coding art etc.
-    pub link: String,    //file name of the post
+    pub link: String,        //file name of the post
 }
 #[allow(dead_code)]
 impl Post {
-    pub fn new(title: &str, language: &str, description: &str, category: &str, file_name: &str) -> Post {
+    pub fn new(
+        title: &str,
+        language: &str,
+        description: &str,
+        category: &str,
+        file_name: &str,
+    ) -> Post {
         Post {
             title: title.to_string(),
             language: language.to_string(),
@@ -115,7 +128,7 @@ impl Post {
             language: String::new(),
             description: String::new(),
             category: String::new(),
-            link: String::new()
+            link: String::new(),
         }
     }
 }
