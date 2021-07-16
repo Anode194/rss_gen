@@ -21,78 +21,60 @@ fn main() {
     .get_matches();
 
     if matches.is_present("new_conf") {
-        let new_config = ConfigData::new("my_new_blog","http://yourblog.com","a blog about coding!","/var/whatever","english");
+        let new_config = ConfigData::new(
+            "my_new_blog",
+            "http://yourblog.com",
+            "a blog about coding!",
+            "/var/whatever",
+            "english",
+        );
         new_config.write_new_config();
     } else if matches.is_present("config") {
-    } else if matches.is_present("input") && matches.is_present("output") {
-    let mut input_file = String::new();
-    let mut output_file = String::from("default");
-    //println!("{:?}",matches.value_of("input"));
-    println!("{:?}",matches);
-    match matches.value_of("input") {
-        Some(x) => input_file = x.to_string(),
-<<<<<<< HEAD
-        None => println!("make sure you include an html or php file with the --i or --input option"),
-    };
-    match matches.value_of("output") {
-        Some(x) => output_file = x.to_string(),
-        None => {println!("couldn't find output file creating new file in current directory...");},
-    };
-    let mut contents =
-=======
-        None => {
-            println!("make sure you include an html or php file with the --i or --input option")
+    } else if matches.is_present("input") {
+        let mut input_file = String::new();
+        let mut output_file = String::from("default");
+        match matches.value_of("input") {
+            Some(x) => input_file = x.to_string(),
+            None => {
+                println!("make sure you include an html or php file with the --i or --input option")
+            }
+        };
+        match matches.value_of("output") {
+            Some(x) => output_file = x.to_string(),
+            None => {
+                println!("couldn't find output file creating new file in current directory...");
+            }
+        };
+        let path = Path::new(&input_file);
+
+        if path.is_dir() {
+            let mut conf = config::read_config();
+            let posts = post_dir(&path);
+            output::write_to_out_file(posts, output_file.as_mut_str(), conf);
+        } else {
+            let mut contents =
+                fs::read_to_string(&input_file).expect("Something went wrong opening the file.");
+            let header_garbage = match strip_till_title(contents.as_mut_str()) {
+                // should return tuple of .0=header_garbagef.1 rest of the contents of the file.
+                Ok(i) => i,
+                Err(e) => panic!("failed to parse header garbage \n{:?}", e),
+            };
+            let header = match parse_title(header_garbage.0) {
+                Ok(i) => i,
+                Err(e) => panic!("parse blogpost title failed \n{:?}", e),
+            };
+            let title = header.1; // saved for when we need to put it into the file at the end.
+            let body = match strip_suffix(header.0) {
+                Ok(i) => i.1,
+                Err(e) => panic!("failed to strip prefix from body. \n{:?}", e),
+            };
+
+            let body = &body.replace("\n", " ").to_string();
+            let mut conf = config::read_config();
+
+            let post = config::Post::new(title, conf.language.as_mut_str(), body, "", &input_file);
+            let posts = vec![post];
+            output::write_to_out_file(posts, output_file.as_mut_str(), conf);
         }
-    }
-    match matches.value_of("output") {
-        Some(x) => output_file = x.to_string(),
-        None => {
-            println!("couldn't find output file creating new file in current directory...");
-        }
-    }
-    let path = Path::new(&input_file);
-    if path.is_dir() {
-        let mut conf = config::read_config();
-        let posts = post_dir(&path);
-        output::write_to_out_file(posts, output_file.as_mut_str(), conf);
-
-    } else {
-        let mut contents =
->>>>>>> 705e0c59efea5a18bdfdeee6c8b54bab54fc8e53
-        fs::read_to_string(&input_file).expect("Something went wrong opening the file.");
-        let header_garbage = match strip_till_title(contents.as_mut_str()) {
-            // should return tuple of .0=header_garbagef.1 rest of the contents of the file.
-            Ok(i) => i,
-
-            Err(e) => panic!("failed to parse header garbage \n{:?}", e),
-        };
-
-        let header = match parse_title(header_garbage.0) {
-            Ok(i) => i,
-            Err(e) => panic!("parse blogpost title failed \n{:?}", e),
-        };
-        let title = header.1; // saved for when we need to put it into the file at the end.
-        let body = match strip_suffix(header.0) {
-            Ok(i) => i.1,
-            Err(e) => panic!("failed to strip prefix from body. \n{:?}", e),
-        };
-
-        let body = &body.replace("\n", " ").to_string();
-        let mut conf = config::read_config();
-
-<<<<<<< HEAD
-   let post = config::Post::new(title, conf.language.as_mut_str(), body, "", &input_file);
-   output::write_to_out_file(post, output_file.as_mut_str(), conf);
-
-    } else {
-        println!("please enter some flags");
-=======
-        //println!("\n\n\n");
-        //println!("{:?}", body);
-        
-        let post = config::Post::new(title, conf.language.as_mut_str(), body, "", &input_file);
-        let posts = vec!(post);
-        output::write_to_out_file(posts, output_file.as_mut_str(), conf);
->>>>>>> 705e0c59efea5a18bdfdeee6c8b54bab54fc8e53
     }
 }
